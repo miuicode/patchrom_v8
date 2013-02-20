@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <public type="drawable" name="btn_selete" id="0x7f020000" />
+    <public type="drawable" name="icon" id="0x7f020001" />
+    <public type="drawable" name="usb_connect" id="0x7f020002" />
+    <public type="layout" name="usbconnectionmode" id="0x7f030000" />
+    <public type="string" name="BtnComplete_txt" id="0x7f040000" />
+    <public type="string" name="usbconnection_title" id="0x7f040001" />
+    <public type="string" name="usm_txt" id="0x7f040002" />
+    <public type="string" name="mtp_txt" id="0x7f040003" />
+    <public type="string" name="usbconnection_noty_title" id="0x7f040004" />
+    <public type="string" name="usbconnection_noty_content" id="0x7f040005" />
+    <public type="string" name="cancel" id="0x7f040006" />
+    <public type="id" name="connectmode" id="0x7f050000" />
+    <public type="id" name="RadioGroup" id="0x7f050001" />
+    <public type="id" name="ums" id="0x7f050002" />
+    <public type="id" name="mtp" id="0x7f050003" />
+    <public type="id" name="leftSpacer" id="0x7f050004" />
+    <public type="id" name="cancel_button" id="0x7f050005" />
+    <public type="id" name="ok_button" id="0x7f050006" />
+    <public type="id" name="rightSpacer" id="0x7f050007" />
+</resources>

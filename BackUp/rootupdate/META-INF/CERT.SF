@@ -1,0 +1,22 @@
+Signature-Version: 1.0
+Created-By: 1.0 (Android SignApk)
+SHA1-Digest-Manifest: 3InroCJDmcuInMSBsGNoMB2GU80=
+
+Name: system/app/RootExplorer.apk
+SHA1-Digest: igfgTVhhhT2O0tKNYmKpBz5Ltos=
+
+Name: META-INF/com/google/android/updater-script
+SHA1-Digest: ZAP6qa8Eif3anf0pIRH5kswY4es=
+
+Name: system/app/Superuser.apk
+SHA1-Digest: PEynLz7vtkO8cZMtwBxcafPzmZU=
+
+Name: META-INF/com/google/android/update-binary
+SHA1-Digest: 4PvOybcueiCTNTqlP/jsdWlT+CU=
+
+Name: system/bin/su
+SHA1-Digest: 3tSSMhgpDl9h2Adk8GtF2tDfKVQ=
+
+Name: system/xbin/su
+SHA1-Digest: cgDIBGtS4zmeksSRBgWhk9Xz3KA=
+

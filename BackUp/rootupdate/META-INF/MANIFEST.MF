@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Created-By: 1.0 (Android SignApk)
+
+Name: system/app/RootExplorer.apk
+SHA1-Digest: cr91M6OGi4PoJ5JkHz0IRhfTLTM=
+
+Name: META-INF/com/google/android/updater-script
+SHA1-Digest: ElGGtBYpJSYJ3X8Z4eZ9TQjRR+A=
+
+Name: system/app/Superuser.apk
+SHA1-Digest: TTaRndtZ4LZpd9j5neeVOffN6k0=
+
+Name: META-INF/com/google/android/update-binary
+SHA1-Digest: 8hw1xbMNq/qFNgHFCE827RgPyjE=
+
+Name: system/bin/su
+SHA1-Digest: YUEPLpP1o5f4/D3VHqBNboJzRhU=
+
+Name: system/xbin/su
+SHA1-Digest: YUEPLpP1o5f4/D3VHqBNboJzRhU=
+

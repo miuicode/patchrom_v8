@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="BtnComplete_txt">确定</string>
+    <string name="usbconnection_title">选择连接方式</string>
+    <string name="usm_txt">U盘模式</string>
+    <string name="mtp_txt">媒体设备/相机</string>
+    <string name="usbconnection_noty_title">选择连接方式</string>
+    <string name="usbconnection_noty_content">选择以更改USB连接方式</string>
+    <string name="cancel">取消</string>
+</resources>

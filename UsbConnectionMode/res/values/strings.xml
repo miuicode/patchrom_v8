@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="BtnComplete_txt">OK</string>
+    <string name="usbconnection_title">Connection mode</string>
+    <string name="usm_txt">USB mass storage</string>
+    <string name="mtp_txt">Media device/Camera</string>
+    <string name="usbconnection_noty_title">USB connection mode</string>
+    <string name="usbconnection_noty_content">Change USB connection mode</string>
+    <string name="cancel">cancel</string>
+</resources>

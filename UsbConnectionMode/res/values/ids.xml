@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="connectmode">false</item>
+    <item type="id" name="RadioGroup">false</item>
+    <item type="id" name="ums">false</item>
+    <item type="id" name="mtp">false</item>
+    <item type="id" name="leftSpacer">false</item>
+    <item type="id" name="cancel_button">false</item>
+    <item type="id" name="ok_button">false</item>
+    <item type="id" name="rightSpacer">false</item>
+</resources>

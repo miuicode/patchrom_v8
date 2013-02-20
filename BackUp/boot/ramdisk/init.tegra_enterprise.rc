@@ -1,0 +1,555 @@
+import init.nv_dev_board.usb.rc
+
+on early-init
+    mount debugfs debugfs /sys/kernel/debug
+    write /sys/class/firmware/timeout 5
+
+    # for backwards compatibility
+    export EXTERNAL_STORAGE /mnt/sdcard
+    export EXTERNAL_STORAGE2 /mnt/sdcard2
+    mkdir /mnt/sdcard 0775 system system
+    symlink /mnt/sdcard /sdcard
+    mkdir /mnt/sdcard2 0775 system system
+
+on fs
+    mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/APP /system wait ro
+    mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/UDA /data wait noatime nosuid nodev journal_async_commit,data=writeback,nodelalloc,errors=panic
+    mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/CAC /cache wait noatime nosuid nodev journal_async_commit,data=writeback,nodelalloc,errors=panic
+    #mkdir /mnt/modem 0770 radio system
+    #mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/MDM /mnt/modem wait ro    
+
+on post-fs-data
+    # Set indication (checked by vold) that we have finished this action
+    setprop vold.post_fs_data_done 1
+
+on boot
+#    mkdir /data/misc/wifi 0770 wifi wifi
+#    mkdir /data/misc/wifi/sockets 0770 wifi wifi
+#    mkdir /data/misc/dhcp 0770 dhcp dhcp
+#    mkdir /data/nvcam 0777 system system
+#    chown dhcp dhcp /data/misc/dhcp
+# wlan permissions
+    mkdir /data/misc/wifi 0771 wifi wifi  
+    mkdir /data/misc/wifi/sockets 0771 wifi wifi 
+    mkdir /data/misc/wifi/cert/ 0771 wifi wifi
+#    mkdir /data/wifi_nvram/ 0771 wifi wifi
+    chmod 0771 /data/misc/wifi
+    chmod 0660 /data/misc/wifi/wpa_supplicant.conf
+    chown wifi wifi /data/misc/wifi/wpa_supplicant.conf
+    mkdir /data/misc/dhcp 0771 dhcp dhcp 
+    chown dhcp dhcp /data/misc/dhcp
+    mkdir /data/misc/dhcpcd 0771 dhcp dhcp 
+    chown dhcp dhcp /data/misc/dhcpcd
+    setprop wifi.interface wlan0
+    # we will remap this as /mnt/sdcard with the sdcard fuse tool
+    mkdir /data/media 0775 media_rw media_rw
+    chown media_rw media_rw /data/media
+    # we will remap this as /mnt/sdcard with the sdcard fuse tool
+    mkdir /data/media 0775 media_rw media_rw
+    chown media_rw media_rw /data/media
+
+#   zouchl reset UsbConnectionMode prop
+    setprop persist.sys.usb.config mass_storage
+
+#   modify for disable dvfs app
+    chown system system /sys/module/tegra3_dvfs/parameters/disable_core
+    chown system system /sys/module/tegra3_dvfs/parameters/disable_cpu
+    chown system system /sys/module/tegra3_emc/parameters/emc_enable
+
+#  added by andrew
+    #chown system system /sys/bqdbg
+    #chmod 0666 /sys/bqdbg
+
+    chown system system /sys/bqdbg/stdaddr
+    chmod 0644 /sys/bqdbg/stdaddr
+
+    chown system system /sys/bqdbg/wrstd
+    chmod 0644 /sys/bqdbg/wrstd
+
+    chown system system /sys/bqdbg/dtfladdr
+    chmod 0644 /sys/bqdbg/dtfladdr
+
+    chown system system /sys/bqdbg/wrdtfl
+    chmod 0644 /sys/bqdbg/wrdtfl
+
+    chown system system /sys/bqdbg/ctrladdr
+    chmod 0644 /sys/bqdbg/ctrladdr
+
+    chown system system /sys/bqdbg/wrctrl
+    chmod 0644 /sys/bqdbg/wrctrl
+
+    #pmu
+    #chown root system /sys/pmudbg
+    #chmod 0644 /sys/pmudbg
+
+    chown system system /sys/pmudbg/seti2cid
+    chmod 0644 /sys/pmudbg/seti2cid
+
+    chown system system /sys/pmudbg/seti2creg
+    chmod 0644 /sys/pmudbg/seti2creg
+
+    chown system system /sys/pmudbg/wr
+    chmod 0644 /sys/pmudbg/wr
+
+
+# bluetooth
+    # power up/down interface
+    chmod 0660 /sys/class/rfkill/rfkill0/state
+    chmod 0660 /sys/class/rfkill/rfkill0/type
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
+
+# audio
+    chmod 0664 /sys/power/suspend/mode
+    chown system audio /sys/power/suspend/mode
+#NFC
+    setprop ro.nfc.port "I2C"
+    chmod 0660 /dev/pn544
+    chown nfc nfc /dev/pn544
+#Touch
+    chmod 777 /dev/touch_ctrl
+    chmod 777 /system/bin/elantouchupgrade
+    chmod 777 /dev/elan-iap
+
+# Add for loud speaker by daihq
+    	chown system system /sys/line_in_check/line_in
+	chmod 664 /dev/line_in_check_node
+	
+        chmod 664 /sys/line_in_check/line_in
+
+# Load wifi driver
+    insmod /system/lib/modules/cfg80211.ko
+# backlight
+    chown system system /sys/class/backlight/tegra-pwm-bl/brightness
+
+# keypadled
+    chown system system /sys/devices/platform/tegra-i2c.4/i2c-4/4-004a/kled.0/brightness
+    chmod 0660          /sys/devices/platform/tegra-i2c.4/i2c-4/4-004a/kled.0/brightness
+
+# 7808 vibrator
+    chown system system /sys/class/timed_output/vibrator/voltage
+    chmod 0664          /sys/class/timed_output/vibrator/voltage
+    chown system system /sys/class/timed_output/vibrator/frequency
+    chmod 0664          /sys/class/timed_output/vibrator/frequency
+    chown system system /sys/class/timed_output/vibrator/startup
+    chmod 0664          /sys/class/timed_output/vibrator/startup
+    chown system system /sys/class/timed_output/vibrator/brake
+    chmod 0664          /sys/class/timed_output/vibrator/brake
+    chown system system /sys/class/timed_output/vibrator/freqadjust
+    chmod 0664          /sys/class/timed_output/vibrator/freqadjust
+
+# p2.2 uart switch
+    chown system system /sys/devices/platform/uart_tx_en/uart_en
+    chmod 0660          /sys/devices/platform/uart_tx_en/uart_en
+
+# didim
+    chown system system /sys/class/graphics/fb0/device/smartdimmer/enable
+    chown system system /sys/class/graphics/fb0/device/smartdimmer/aggressiveness
+
+# power
+    chown system system /sys/kernel/tegra_cap/core_cap_level
+    chown system system /sys/kernel/tegra_cap/core_cap_state
+    chown system system /sys/module/cpu_tegra/parameters/cpu_user_cap
+
+# Sensor
+    chmod 666 /dev/nvhost-ctrl
+    chmod 666 /dev/nvhost-display
+    chmod 666 /dev/nvhost-dsi
+    chmod 666 /dev/nvhost-gr2d
+    chmod 666 /dev/nvhost-gr3d
+    chmod 666 /dev/nvhost-isp
+    chmod 666 /dev/nvhost-mpe
+    chmod 666 /dev/nvhost-vi
+
+    chown system system /dev/akm8975_aot
+    chown system system /dev/akm8975_dev
+
+    chown system system /sys/bus/iio/devices/device0/als_ir_mode
+    chown system system /sys/bus/iio/devices/device0/proximity_enable
+    insmod /system/lib/modules/mpu3050.ko
+    insmod /system/lib/modules/inv_mpu_kxtf9.ko
+    insmod /system/lib/modules/inv_mpu_ak8975.ko
+
+# BB remote file system
+    #mkdir /data/rfs
+    #mkdir /data/rfs/data
+    #mkdir /data/rfs/data/modem
+    #mkdir /data/rfs/data/debug
+    #chown radio system /data/rfs/data
+    #chown radio system /data/rfs/data/modem
+    #chown radio log /data/rfs/data/debug
+    #symlink /system/vendor/firmware/data/config /data/rfs/data/config
+    #symlink /system/vendor/firmware/app /data/rfs/app
+    #symlink /mnt/modem/data/factory /data/rfs/data/factory
+    #start fil-daemon
+
+# BB mapping symbolic name to the logging ttyACM port
+    #symlink /dev/ttyACM3 /dev/log_modem
+    #chmod 775 /data/rfs/data/debug
+
+# GPIO BB access for user radio
+    #chown radio system /sys/class/gpio/gpio32/value
+
+# Power management settings
+    write /sys/module/cpu_tegra3/parameters/no_lp 0
+    #write /sys/module/tegra3_emc/parameters/emc_enable 0
+    #write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 1000000
+
+     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor conservative
+     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor conservative
+     write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor conservative
+     write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor conservative
+
+     write /sys/devices/system/cpu/cpufreq/conservative/up_threshold 95
+     write /sys/devices/system/cpu/cpufreq/conservative/down_threshold 50
+     write /sys/devices/system/cpu/cpufreq/conservative/freq_step 3
+
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpufreq/interactive/boost_factor 2
+    write /sys/devices/system/cpu/cpufreq/interactive/sustain_load 80
+    write /sys/module/cpu_tegra3/parameters/auto_hotplug 1
+    write /sys/devices/system/cpu/cpufreq/interactive/dynamic_freq_mode 1
+    write /sys/module/cpuidle/parameters/lp2_in_idle 1
+# Modify permission for NvPowerMgr
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load
+    chown system system /sys/devices/system/cpu/cpufreq/interactive/max_boost
+#    chmod 0644 /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load
+#    chmod 0644 /sys/devices/system/cpu/cpufreq/interactive/max_boost
+
+# Power management for camera preview and record
+	chown media camera /sys/devices/platform/tegra_camera/camera_preview
+	chown media camera /sys/devices/platform/tegra_camera/camera_record
+
+# Power management for jpeg decode
+    chown media sdcard_rw /sys/devices/nvavp/jpeg_decode
+
+# Power management for video playback
+    chown media sdcard_rw /sys/devices/nvavp/video_play
+
+# Increase read ahead size of mmc block devices from default(128) to 1MB
+# Reduces power comsuption during video playback from sdcards
+    write /sys/block/mmcblk0/queue/read_ahead_kb 2048
+    write /sys/block/mmcblk1/queue/read_ahead_kb 2048
+
+# GPS init
+#    write /sys/class/gpio/export 36
+#    write /sys/class/gpio/gpio36/value 0
+#    write /sys/class/gpio/gpio36/direction out
+#    chown root system /sys/class/gpio/gpio36/value
+#    chmod 0664 /sys/class/gpio/gpio36/value
+#    write /sys/class/gpio/export 37
+#    write /sys/class/gpio/gpio37/direction out
+#    write /sys/class/gpio/gpio37/value 1
+#    chown root system /sys/class/gpio/gpio37/value
+#    chmod 0664 /sys/class/gpio/gpio37/value
+
+# for ktouch CIT app
+    chown root system /dev/block/mmcblk0p8
+    chmod 0660 /dev/block/mmcblk0p8
+    chown root system /dev/block/mmcblk0p5
+    chmod 0660 /dev/block/mmcblk0p5
+    chown root system /dev/fuelgauge
+    chmod 0660 /dev/fuelgauge
+    chown root system /sys/devices/platform/keypad_bl_led/keyled_enable 
+    chmod 0664 /sys/devices/platform/keypad_bl_led/keyled_enable
+
+# Load WiFi driver
+     insmod /system/lib/modules/bcmdhd.ko
+	 #chown root system /sys/kernel/debug/dhd/mem
+	chown root system /sys/wifi_properties/wifi.macaddr
+	chmod 0664 /sys/wifi_properties/wifi.macaddr
+# Save kernel log
+    copy /proc/last_kmsg /data/last_kmsg
+    chown root log /data/last_kmsg
+    chmod 0644 /data/last_kmsg
+
+service wpa_supplicant /system/bin/wpa_supplicant \
+    -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf
+#    -Dwext -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf
+#   we will start as root and wpa_supplicant will switch to user wifi
+#   after setting up the capabilities required for WEXT
+#   user wifi
+#   group wifi inet keystore
+    socket wpa_wlan0 dgram 660 wifi wifi
+    disabled
+    oneshot
+
+service dhcpcd_wlan0 /system/bin/dhcpcd -ABKL
+    class main
+    disabled
+    oneshot
+
+service dhcpcd_p2p /system/bin/dhcpcd -aABKL
+    class main
+    disabled
+    oneshot
+
+service dhcpcd_bnep0 /system/bin/dhcpcd -ABKL
+    class main
+    disabled
+    oneshot
+
+service iprenew_p2p /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+
+#wanglr deleted
+#service dhcpcd_bnep0 /system/bin/dhcpcd -ABKL
+#    disabled
+#    oneshot
+
+# create virtual SD card at /mnt/sdcard, based on the /data/media directory
+# deamon will drop to user/group system/media_rw after initializing
+# underlying files in /data/media wil be created with user and group media_rw (1023)
+#service sdcard /system/bin/sdcard /data/media 1023 1023
+#    class late_start
+
+# bugreport is triggered by the VOLUME-DOWN and VOLUME-UP keys
+service bugreport /system/bin/dumpstate -d -v -o /data/storage/bugreports/bugreport
+    disabled
+    oneshot
+    keycodes 115 114
+
+#BCM
+#service hciattach /system/bin/brcm_patchram_plus --enable_hci \
+#    --baudrate 3000000 --patchram /etc/firmware/bcm4329.hcd \
+#    --enable_lpm --pcm_role slave /dev/ttyHS2
+#    user bluetooth
+#    group bluetooth net_bt_admin
+#    disabled
+on boot
+    mkdir /data/misc/bluetooth 0770 bluetooth bluetooth
+    chown system system /sys/module/bluetooth_power/parameters/power
+    chown system system /sys/class/rfkill/rfkill0/type
+    chown system system /sys/class/rfkill/rfkill0/state
+    chown bluetooth bluetooth /proc/bluetooth/sleep/proto
+    chown system system /sys/module/sco/parameters/disable_esco
+    chmod 0664 /sys/module/bluetooth_power/parameters/power
+    chmod 0664 /sys/class/rfkill/rfkill0/state
+    chmod 0660 /proc/bluetooth/sleep/proto
+    chown bluetooth bluetooth /dev/ttyHS2
+    chmod 0660 /dev/ttyHS2
+    chmod 0775 /data
+
+service hciattach_test  /system/bin/brcm_patchram_plus \
+  --enable_test --tosleep 200000 --patchram /etc/firmware/brcm_bluetooth.hcd  /dev/ttyHS2
+    user root
+    group root
+    disabled
+
+service hciattach_stop  /system/bin/brcm_patchram_plus \
+  --disable_test --tosleep 200000 --patchram /etc/firmware/brcm_bluetooth.hcd  /dev/ttyHS2
+    user root
+    group root
+    disabled
+    
+service hciattach /system/bin/brcm_patchram_plus \
+ --enable_hci  --enable_lpm  --baudrate 3000000 --tosleep 200000 --patchram /etc/firmware/brcm_bluetooth.hcd  /dev/ttyHS2
+    user bluetooth
+    group system bluetooth net_bt_admin misc
+    oneshot
+    disabled
+
+# Start FIL daemon
+# service fil-daemon /system/bin/fild -p /dev/ttyHS0 -s /dev/ttyACM0 -f /dev/ttyACM0 --with-bt3
+#     class main
+#     user radio
+#     group log
+#     disabled
+
+# Start AGPS daemon
+# service agps-daemon /system/bin/agpsd
+#     class main
+#     user radio
+#     group system
+
+# Start GPS daemon
+on boot
+  chown root system /dev/ttyHS1
+  chmod 0664 /dev/ttyHS1
+
+service glgps /system/bin/glgps -c /system/etc/gps/gpsconfig.xml
+   user root
+   class main
+   socket gps seqpacket 0660 gps system
+   socket rilgps.socket seqpacket 0660 gps system
+   group system inet sdcard_rw
+
+# service gps-daemon /system/bin/glgps_nvidiaTegra2android -c /system/etc/gps/gpsconfig.xml
+#     user gps
+#     class late_start
+#     socket gps seqpacket 0660 gps system
+#     socket rilgps.socket seqpacket 0660 gps system
+#     group system inet sdcard_rw
+
+# Recovery daemon: configure MSC partition
+service recoveryd /system/bin/recoveryd /dev/block/platform/sdhci-tegra.3/by-name/MSC
+    disabled
+    class main
+    user root
+    group root
+    oneshot
+
+on property:sys.shutdown.requested=1recovery
+    start recoveryd
+
+# ######################################### RIL START ##############################################
+
+service ril_wcdma /system/bin/rild -l /system/lib/libxgold-ril.so -- -d /dev/ttyMUX2
+    class main
+    socket rild stream 660 root radio
+    socket rild-debug stream 660 radio system
+    user root
+    group radio cache inet misc audio
+#    disabled
+
+# ### rilsyscmd for ril special using: 
+service rilsyscmd /system/bin/rilsyscmd -RIL_SPECIAL
+    user root
+    group radio cache inet misc audio
+    disabled
+
+service pppd_gprs /system/etc/ppp/init.gprs-pppd
+    class main
+    user root
+    group root system radio cache inet misc
+    disabled
+
+service gsm0710mux /system/bin/gsm0710muxd -s /dev/ttyACM0 -v 5 -n 8 -m basic
+    class main
+    user root
+    group root system radio cache inet misc audio
+
+# ifx for GSM/WCDMA:
+service ifx-setup /init.ifx.sh /dev/ttyIPC0
+    oneshot
+    disabled
+
+#on property:ro.ty.gsm.wcdma.ril=true
+#    start ifx-setup
+#    start xgold-mux
+#    start ril_wcdma
+
+# property for restart ril deamon:
+on property:ty.ril.restart.deamon=true
+    stop ril_wcdma
+    start ril_wcdma
+
+# #########################################  RIL END  ##############################################
+
+# TYRD:jinjt add for kmsg log saved to sdcard PROD100098224
+service logmodule /system/bin/logmodule
+	class main
+    user root
+    group root
+
+service akmd8975 /system/bin/akmd8975
+	class main
+	user root
+	group root
+	oneshot
+
+# TY yujie add for wifi mac write during system boot
+service WriteWifiMac /system/bin/WriteWifiMac -p
+	class main
+	user  root
+	group root
+	oneshot
+
+# Prepare TF service
+import init.tf.rc
+
+# create filesystems if necessary
+service setup_fs /system/bin/setup_fs \
+        /dev/block/platform/sdhci-tegra.3/by-name/UDA \
+        /dev/block/platform/sdhci-tegra.3/by-name/CAC 
+        #/dev/block/platform/sdhci-tegra.3/by-name/MDM
+    class core
+    user root
+    group root
+    oneshot
+
+# on property:ril.testmode=1
+#     stop ril-daemon
+#     start ril-daemon-test
+# 
+# on property:ril.testmode=0
+#     stop ril-daemon-test
+#     start ril-daemon
+# 
+# on property:modem.ril.enabled=0
+#     stop ril-daemon
+# 
+# on property:modem.ril.enabled=1
+#     stop ril-daemon
+#     start ril-daemon
+# 
+# on property:modem.fild.mode=ift
+#     stop fil-daemon
+#     start fil-daemon
+# 
+# on property:modem.fild.mode=mdm
+#     stop fil-daemon
+#     start fil-daemon
+
+service wpa_suppl_nl /system/bin/wpa_supplicant \
+    -Dnl80211 -puse_p2p_group_interface=1 -e/data/misc/wifi/entropy.bin
+#   we will start as root and wpa_supplicant will switch to user wifi
+#   after setting up the capabilities required for WEXT
+#   user wifi
+#   group wifi inet keystore
+    class main
+    socket wpa_wlan0 dgram 660 wifi wifi
+    disabled
+    oneshot
+
+service wpa_suppl_wext /system/bin/wpa_supplicant \
+    -Dwext -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf
+#   we will start as root and wpa_supplicant will switch to user wifi
+#   after setting up the capabilities required for WEXT
+#   user wifi
+#   group wifi inet keystore
+    class main
+    socket wpa_wlan0 dgram 660 wifi wifi
+    disabled
+    oneshot
+
+# default chipset (currently bcm4329)
+# on property:ro.commchip=0
+#     setprop wifi.driver.name bcm4329
+#     setprop wifi.driver.path /system/lib/modules/bcm4329.ko
+#     setprop wifi.firmware.path.ap /system/vendor/firmware/fw_bcm4329_apsta.bin
+#     setprop wifi.driver.arg "iface_name=wlan0"
+#     setprop wifi.supplicant wpa_suppl_wext
+#     setprop wifi.use_hostapd 0
+# 
+# # bcm4329 chipset
+# on property:ro.commchip=2
+#     setprop wifi.driver.name bcm4329
+#     setprop wifi.driver.path /system/lib/modules/bcm4329.ko
+#     setprop wifi.firmware.path.ap /system/vendor/firmware/fw_bcm4329_apsta.bin
+#     setprop wifi.driver.arg "iface_name=wlan0"
+#     setprop wifi.supplicant wpa_suppl_wext
+#     setprop wifi.use_hostapd 0
+# 
+# bcm4330 chipset
+#on property:ro.commchip=3
+#    insmod /system/lib/modules/bcmdhd.ko
+#	chown root system /sys/kernel/debug/dhd/mem
+#    setprop wifi.supplicant wpa_suppl_nl
+
+# End of testmode patches.
+
+# Enable NvCpuD, and set it to never poll config again
+on boot
+    setprop nvcpud.enabled true
+    setprop nvcpud.config_refresh_ms -1
+
+service nvcpud /system/bin/nvcpud
+    class main
+    user root
+    group root

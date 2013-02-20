@@ -1,0 +1,3 @@
+post-build=K-TOUCH/enterprise/enterprise:4.0.4/IMM76D/TBW780818_8365_V0230:user/test-keys
+post-timestamp=1344655231
+pre-device=enterprise

@@ -1,0 +1,47 @@
+    How to install the Windows XP USB kernel mode driver for AP15/AP16/AP20 
+    recovery mode.
+
+Introduction
+    
+    Microsft provides a generic kernel mode driver starting in their new Windows
+    Driver Foundation (WDF) acritecture. This is a prefeered model for USB
+    drivers and works on Windows XP and Vista operating system.
+    
+    Nvidia provides the customized inf file to install the winusb.sys file. Once
+    the driver is installed applicaitons can talk to the AP1x bootrom USB stack
+    using the winusb.dll user mode APIs.
+
+
+Creating Driver disks
+
+    To create a driver installation directory use the following script
+    instal.bat in the current directory. This will create the directory
+    c:\temp\nvidia_usb_drivers 
+
+    For the script to run P4ROOT should be set and NT6 ddk build number 6000 
+    should be synced.
+
+    Nt6 build 6001.18002 is installed in perforce at 
+
+    //sw/tools/ddk/nt6/6001.18002/....
+
+How to use NvidiaUsb.inf to install the kernel driver
+
+    Once the driver installation directory is created, plug in the USB cable
+    with the AP1x system in USB recovery mode. (How to configure the AP1x system
+    to be in bootrecovery mode is beyond the scope of this doc. Pleas refer to
+    hw/syseng docs).
+
+    Windows system will pop up a window to install the driver. Guide the windows
+    install application to the driver install directoy
+    (c:\temp\nvidia_usb_drivers). From here on it is a standard procedure on
+    installing any driver. Since the dirver is not signed you will get a
+    security warning message - ignore that.
+
+    Once the installation starts it might take *long* time - as much as 15 min.
+    Please be patient, this installer has coinstaller and installs the 
+    entire WDF framework - if already not installed
+    
+
+NOTE: THIS DRIVER IS AP1X RECOVERY MODE DEVICE, NOT OTHER KINDS OF USB DRIVER
+LIKE RNDIS, MASS TRANSPORT ETC.
